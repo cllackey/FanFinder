@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>FanFinder</title>
+</head>
+<style>
+	body {
+		font-family: Helvetica;
+		margin:0 auto;
+		width:935px;
+
+	}
+	.selectable {
+			background: #ccc;
+			border-radius:5px;
+			text-align: center;
+			margin:10px;
+			display: inline-block;
+			width:200px;
+			height:150;
+			transition:0.2s;
+			cursor: pointer;
+			padding:5px;
+	}
+	.selected, .selectable:hover {
+		background: rgb(50, 150, 50);
+		color: #eee;
+	}
+	.selectable img {
+		width:100px;
+		height:100px;
+		margin:0 auto;
+		display: block;
+	}
+	.team_selector {
+		height:400px;
+		width:935px;
+		overflow: scroll;
+	}
+	button {
+		margin:0 auto;
+		display: block;
+		font-size:30px;
+		padding:10px 80px;
+		background: #aaa;
+		border-radius: 10px;
+		color:white;
+		border:0px;
+		cursor: pointer;
+	}
+	button:hover {
+		background: rgb(50, 150, 50);
+	}
+</style>
+<body ng-app="app" ng-controller="MainCtrl">
+
+	<h1>FanFinder</h1>
+
+	<p>Welcome to FanFinder! Please choose your favorite teams to get started!</p>
+
+	<h3>NFL</h3>
+	<div class="team_selector">
+		<div class="selectable" ng-repeat="team in teams" ng-class="{selected: selected_teams.has(team.name)}" ng-click="!selected_teams.has(team.name) ? selected_teams.add(team.name) : selected_teams.delete(team.name)">
+			<img src="{{team.logo_image}}">
+			{{team.name}}
+		</div>
+	</div>
+
+	<button>Next</button>
+
+
+</body>
+<script type="text/javascript" src="/js/angular.min.js"></script>
+<script type="text/javascript" src="/js/script.js"></script>
+</html>
