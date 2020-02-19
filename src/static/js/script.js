@@ -9,5 +9,57 @@ var app = angular.module("app", [])
 
 app.controller("MainCtrl", function($scope) {
 	$scope.selected_teams = new Set();
+	$scope.chat_messages = [];
 	$scope.teams = team_data.nfl;
+
+	$scope.now_chatting = false;
+	$scope.active_team = null;
+
+	$scope.startChatting = function() {
+		$scope.now_chatting = true;
+		$scope.joinTeam($scope.getTeams()[0]);
+	}
+
+
+
+ 	socket.on("receive", function(msg) {
+ 		console.log("received:", msg);
+  		$scope.chat_messages.push(msg);
+  		$scope.$apply();
+  	})
+
+	$scope.getTeams = function() {
+		return Array.from($scope.selected_teams);
+	}
+
+	$scope.addTeam = function(team) {
+		console.log("now ading team!");
+
+		if($scope.selected_teams.has(team)) {
+			$scope.selected_teams.delete(team);
+		} else {
+			console.log("ADDING NOW!");
+			console.log($scope.selected_teams);
+			$scope.selected_teams.add(team);
+		}
+	}
+
+	$scope.joinTeam = function(team) {
+		$scope.chat_messages = [];
+		$scope.active_team = team;
+		socket.emit("joinTeam", team.name);
+	}
+
+	$scope.chat = function(e) {
+		if(e.keyCode == 13) {
+			$scope.sendMessage();
+		}
+	}
+
+	$scope.sendMessage = function() {
+		socket.emit("msg", $scope.chatMessage)
+		$scope.chatMessage = "";
+	}
+
+
 });

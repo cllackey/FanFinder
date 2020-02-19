@@ -37,7 +37,7 @@
 		width:935px;
 		overflow: scroll;
 	}
-	button {
+	.navButton {
 		margin:0 auto;
 		display: block;
 		font-size:30px;
@@ -51,25 +51,74 @@
 	button:hover {
 		background: rgb(50, 150, 50);
 	}
+
+	.chatRoom {
+		border:1px solid #333;
+		border-radius:10px;
+		padding:20px;
+		min-height:400px;
+		overflow-y: scroll;
+	}
+
+	.chatMessage {
+		padding:5px;
+		border-bottom:1px dotted;
+	}
+
+
+	#chatMessage {
+		width:90%;
+	}
+	.chatBox button {
+		width:9%;
+		box-sizing:border-box;
+	}
 </style>
 <body ng-app="app" ng-controller="MainCtrl">
 
 	<h1>FanFinder</h1>
 
-	<p>Welcome to FanFinder! Please choose your favorite teams to get started!</p>
+	<div ng-show="!now_chatting" style="display:block;">
+		<p>Welcome to FanFinder! Please choose your favorite teams to get started!</p>
 
-	<h3>NFL</h3>
-	<div class="team_selector">
-		<div class="selectable" ng-repeat="team in teams" ng-class="{selected: selected_teams.has(team.name)}" ng-click="!selected_teams.has(team.name) ? selected_teams.add(team.name) : selected_teams.delete(team.name)">
+		<h3>NFL</h3>
+
+		<div class="team_selector">
+			<div class="selectable" ng-repeat="team in teams" ng-class="{selected: selected_teams.has(team)}" ng-click="addTeam(team)">
+				<img src="{{team.logo_image}}">
+				{{team.name}}
+			</div>
+		</div>	
+
+		<button ng-disabled="getTeams().length == 0" class="navButton" ng-click="startChatting()">Next</button>
+	</div>
+
+
+	<div ng-show="now_chatting">
+		<div class="selectable" ng-repeat="team in getTeams()" ng-click="joinTeam(team)" ng-class="{selected: active_team == team}">
 			<img src="{{team.logo_image}}">
 			{{team.name}}
 		</div>
-	</div>
 
-	<button>Next</button>
+		<p>Cool! You love these teams. Click on one to join a room and start chatting with fellow fans.</p>
+
+
+		You are now chatting about the {{ getTeams()[0].name }}
+
+		<div class="chatBox">
+			<div class="chatRoom">
+				<div class="chatMessage" ng-repeat="msg in chat_messages track by $index">{{msg}}</div>
+			</div>
+			<input ng-keypress="chat($event)" ng-model="chatMessage" id="chatMessage" placeholder="Type a message to send"><button ng-click="sendMessage()">Send</button>
+		</div>
+	</div>
 
 
 </body>
-<script type="text/javascript" src="/js/angular.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+</script>
 <script type="text/javascript" src="/js/script.js"></script>
 </html>
